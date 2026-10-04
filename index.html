@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q1 Indic Everyday Image Eval — Blind Rating</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:1100px;margin:0 auto;padding:16px;line-height:1.45}
+  .card{border:1px solid #ccc;border-radius:10px;padding:14px;margin:12px 0}
+  .imgs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media(max-width:700px){.imgs{grid-template-columns:1fr}}
+  .imgs img{width:100%;border:1px solid #999;border-radius:6px;cursor:zoom-in;background:#f4f4f4}
+  .imgs.phonesize img{max-width:360px;margin:0 auto}
+  .slot{text-align:center}
+  .missing{border:2px dashed #a00;border-radius:6px;padding:40px 10px;color:#a00;font-weight:bold}
+  label{display:block;margin:6px 0}
+  input[type=text],input[type=email],input[type=number],select{width:100%;max-width:420px;padding:6px}
+  table.rubric{border-collapse:collapse;width:100%;margin-top:8px}
+  table.rubric th,table.rubric td{border:1px solid #bbb;padding:4px;text-align:center;font-size:14px}
+  button{padding:10px 18px;font-size:16px;margin:6px 4px;cursor:pointer}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .anchor{font-size:12px;color:#333}
+  #zoom{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:50}
+  #zoom img{max-width:94vw;max-height:94vh;background:#fff}
+  .err{color:#a00;font-weight:bold}
+  .muted{color:#555;font-size:13px}
+  .tags label{display:inline-block;margin:2px 8px 2px 0;font-size:14px}
+</style>
+</head>
+<body>
+<h1>Q1 Indic Everyday Image Eval — Blind Rating</h1>
+<p class="muted">You will see <b>three AI image tools'</b> outputs per prompt, labelled only <b>Left / Centre / Right</b>
+(position labels, reshuffled every prompt — they are <b>not</b> model identities). Please rate alone, without discussing with others.</p>
+
+<div id="resume-box" class="card" style="display:none">
+  <p id="resume-msg"></p>
+  <button id="btn-resume" type="button">Resume my session</button>
+</div>
+
+<!-- ============================== SCREEN 1: CONSENT ============================== -->
+<div id="screen-consent" class="card">
+  <h2>1. Consent &amp; about you (required)</h2>
+  <label>Full name <input id="f-name" type="text" autocomplete="name"></label>
+  <label>Email <input id="f-email" type="email" autocomplete="email"></label>
+  <label>Age (must be 18 or older) <input id="f-age" type="number" min="0" max="120"></label>
+  <fieldset><legend>Scripts you read fluently (tick all that apply — you will only rate prompts in these scripts, plus the English control)</legend>
+    <label><input type="checkbox" class="f-script" value="Hindi"> Hindi (Devanagari)</label>
+    <label><input type="checkbox" class="f-script" value="Telugu"> Telugu</label>
+    <label><input type="checkbox" class="f-script" value="English"> English</label>
+  </fieldset>
+  <label>Region / state <input id="f-region" type="text" placeholder="e.g. Uttar Pradesh"></label>
+  <label>Role
+    <select id="f-role">
+      <option value="">— select —</option>
+      <option>student</option><option>working professional</option><option>small business or shop</option>
+      <option>homemaker</option><option>retired</option><option>other</option>
+    </select>
+  </label>
+  <label>Assigned rater ID (if the organiser gave you one, e.g. R01 — otherwise leave blank and one is generated)
+    <input id="f-rater" type="text" placeholder="R01"></label>
+  <div class="card">
+    <p><b>Consent statement (please read and tick):</b></p>
+    <p><i>I confirm that I am 18 years or older. I voluntarily participated in this evaluation. I consent to my name, email, and responses/ratings being included in this assignment submission for hiring evaluation purposes.</i></p>
+    <label><input id="f-consent" type="checkbox"> I agree to the statement above (required)</label>
+  </div>
+  <p id="consent-err" class="err"></p>
+  <button id="btn-consent">Continue to practice →</button>
+</div>
+
+<!-- ============================== SCREEN 2: PRACTICE ============================== -->
+<div id="screen-practice" class="card" style="display:none">
+  <h2>2. Practice (unscored) — how to use the 1–5 anchors</h2>
+  <p>There are five dimensions. Use the prompt's <b>answer-key hint</b> (shown on each rating screen), not memory. Reference anchors:</p>
+  <table class="rubric">
+    <tr><th>Dimension</th><th>5</th><th>3</th><th>1</th></tr>
+    <tr><td><b>D1</b> Script &amp; text accuracy</td><td>Every requested string present, spelled correctly</td><td>Most legible, but ≥2 errors or one label unreadable</td><td>No legible requested text / gibberish / wrong script</td></tr>
+    <tr><td><b>D2</b> Right items in the right place</td><td>Every requested item present and correct, each text where it belongs</td><td>2–3 errors, or one error that would confuse a reader or customer</td><td>Wrong scene / unrecognisable subject</td></tr>
+    <tr><td><b>D3</b> Prompt adherence</td><td>All elements, style, layout, label count; no unrequested text</td><td>About half the requested elements</td><td>Largely ignores the prompt</td></tr>
+    <tr><td><b>D4</b> Clarity for learning (phone size)</td><td>Instantly clear on a phone; clean hierarchy</td><td>Understandable with effort</td><td>Unusable as a greeting or signboard</td></tr>
+    <tr><td><b>D5</b> India fit</td><td>Made for Indian users: setting, people, food, festival items, signboard style</td><td>Generic, nothing wrong (default when no cultural content)</td><td>Culturally wrong or stereotyped</td></tr>
+  </table>
+  <p class="muted">Per prompt you will: score 5 dimensions × 3 images, mark usable-as-is per image
+  (Yes / Yes after minor fix / No), pick the overall best (or "all equally unusable"), optionally add failure tags.
+  A "no image" slot is scored 1 everywhere, "No" on usable, auto-tagged <code>no_output</code>, and ranked last.</p>
+  <button id="btn-practice">Start rating →</button>
+</div>
+
+<!-- ============================== SCREEN 3: RATING ============================== -->
+<div id="screen-rate" class="card" style="display:none">
+  <h2 id="r-title">Prompt</h2>
+  <p id="r-prompt"></p>
+  <details><summary>Answer-key hint (what to check — from the eval spec)</summary><p id="r-key" style="white-space:pre-wrap"></p></details>
+  <p><span id="r-progress" class="muted"></span> &nbsp; <button id="btn-copy" type="button">Copy prompt</button>
+    <label style="display:inline"><input id="r-phone" type="checkbox" checked> Phone-size preview</label></p>
+  <p id="coll-status" class="muted"></p>
+  <div id="r-imgs" class="imgs phonesize"></div>
+  <div id="r-form"></div>
+  <label>Overall preference (best image — no ties except "all equally unusable")
+    <select id="r-pref">
+      <option value="">— select —</option>
+      <option value="left">Left is best</option>
+      <option value="centre">Centre is best</option>
+      <option value="right">Right is best</option>
+      <option value="tie_unusable">All equally unusable</option>
+    </select>
+  </label>
+  <label>Overall worst (the image you rank last; set automatically if a slot has no image)
+    <select id="r-worst">
+      <option value="">— select —</option>
+      <option value="left">Left is worst</option>
+      <option value="centre">Centre is worst</option>
+      <option value="right">Right is worst</option>
+      <option value="n/a" hidden>n/a</option>
+    </select>
+  </label>
+  <p id="rate-err" class="err"></p>
+  <button id="btn-back">← Back</button>
+  <button id="btn-next" disabled>Next →</button>
+</div>
+
+<!-- ============================== SCREEN 4: DONE ============================== -->
+<div id="screen-done" class="card" style="display:none">
+  <h2>Done — thank you!</h2>
+  <p id="done-msg"></p>
+  <p id="done-coll" class="muted"></p>
+  <button id="btn-download">Download my ratings CSV</button>
+  <button id="btn-consent-dl">Download my consent record CSV</button>
+  <p class="muted">Please send the downloaded file(s) back to the organiser. Your ratings are also saved in this browser (localStorage) if you need to re-download.</p>
+</div>
+
+<div id="zoom" onclick="this.style.display='none'"><img id="zoom-img" alt="zoomed"></div>
+
+<script>
+"use strict";
+/* ---------- constants (spec Sec 3 + 5.5) ---------- */
+const DIMS = [
+  ["d1","D1 Script & text accuracy","5 all strings correct · 3 most legible, ≥2 errors · 1 gibberish/wrong script"],
+  ["d2","D2 Right items in the right place","5 all items correct · 3 2-3 errors · 1 wrong scene"],
+  ["d3","D3 Prompt adherence","5 all elements, no extra text · 3 about half · 1 ignores prompt"],
+  ["d4","D4 Clarity for learning (phone)","5 instantly clear · 3 effort needed · 1 unusable"],
+  ["d5","D5 India fit","5 made for Indian users · 3 generic · 1 wrong/stereotyped"]
+];
+const TAGS = ["text_garbled","wrong_script","spelling_matra_conjunct","missing_label","extra_text",
+  "label_wrong_part","wrong_item_or_count","culture_off","layout_clutter","no_output"];
+const TAG_DEFS = {"text_garbled":"unreadable glyphs","wrong_script":"wrong script",
+  "spelling_matra_conjunct":"matra/conjunct wrong","missing_label":"a requested string absent",
+  "extra_text":"unrequested text added","label_wrong_part":"text/object in wrong place",
+  "wrong_item_or_count":"missing/wrong object or count","culture_off":"culturally wrong",
+  "layout_clutter":"cluttered/illegible","no_output":"no image returned"};
+const CSV_COLS = ["rater_id","name","email","age","consent","prompt_id","image_id_left","image_id_centre",
+  "image_id_right","d1_left","d2_left","d3_left","d4_left","d5_left","usable_left",
+  "d1_centre","d2_centre","d3_centre","d4_centre","d5_centre","usable_centre",
+  "d1_right","d2_right","d3_right","d4_right","d5_right","usable_right",
+  "overall_preference","overall_worst","failure_tags_left","failure_tags_centre","failure_tags_right",
+  "comment","time_seconds","timestamp"];
+
+const COLLECTOR_URL = "https://script.google.com/macros/s/AKfycbwS8qUYtQWxlevw4ImPxwf8biVDrbNUFnXWa_Bh-g1_rFbWgFinJFFZwCyZT9yBkIeCPQ/exec";
+const COLLECTOR_TOKEN = "Qsef@1234";
+
+/* ---------- collector (online submit; inert when COLLECTOR_URL is empty) ---------- */
+function collKey(){return "q1_queue_"+(RATER?RATER.rater_id:"noid");}
+function loadQueue(){try{return JSON.parse(localStorage.getItem(collKey())||"[]");}catch(e){return [];}}
+function saveQueue(q){try{localStorage.setItem(collKey(),JSON.stringify(q));}catch(e){}}
+function consentRow(){return {rater_id:RATER.rater_id,name:RATER.name,email:RATER.email,age:RATER.age,
+  consent:RATER.consent,scripts_read:RATER.scripts.join("|"),region:RATER.region,role:RATER.role,
+  consent_ts:RATER.consent_ts};}
+function pickCols(row,cols){const o={};cols.forEach(c=>o[c]=row[c]??"");return o;}
+let collFailStreak=0, collTimer=null, collChain=Promise.resolve();
+async function postEntry(e){
+  let res;
+  try{
+    res=await fetch(COLLECTOR_URL,{method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({token:COLLECTOR_TOKEN,type:e.type,row:e.row})});
+  }catch(err){return "failed";}
+  try{const j=await res.json();return (j&&j.ok===true)?"confirmed":"failed";}
+  catch(err){return "unconfirmed";}
+}
+function flushQueue(){
+  if(!COLLECTOR_URL||!RATER)return;
+  collChain=collChain.then(runFlush).catch(()=>{}); // serialize: no overlapping load/save
+}
+async function runFlush(){
+  const q=loadQueue();
+  for(const e of [...q]){
+    const st=await postEntry(e);
+    e.state=st;
+    if(st==="confirmed"){q.splice(q.indexOf(e),1);}
+  }
+  saveQueue(q);
+  if(q.length){collFailStreak++;scheduleFlush(Math.min(1500*Math.pow(2,collFailStreak),30000));}
+  else{collFailStreak=0;if(collTimer){clearTimeout(collTimer);collTimer=null;}}
+  refreshCollectorStatus();
+}
+function scheduleFlush(ms){if(collTimer)clearTimeout(collTimer);collTimer=setTimeout(flushQueue,ms);}
+function enqueue(type,row){
+  if(!COLLECTOR_URL||!RATER)return;
+  const q=loadQueue();q.push({type,row,state:"pending"});saveQueue(q);
+  refreshCollectorStatus();
+  flushQueue(); // immediate attempt; failures stay queued with backoff
+}
+function refreshCollectorStatus(){
+  const q=RATER?loadQueue():[];
+  const pend=q.filter(e=>e.state==="pending").length, unconf=q.filter(e=>e.state==="unconfirmed").length;
+  const msg=!COLLECTOR_URL?"":pend||unconf?`Saving... (${pend+unconf} not confirmed, your answers are still saved on this device)`:"Saved";
+  const a=$("coll-status"),b=$("done-coll");
+  if(a)a.textContent=msg;
+  if(b){
+    if(!COLLECTOR_URL)b.textContent="";
+    else if(!pend&&!unconf)b.innerHTML='All ratings confirmed on the server. <a href="#" id="btn-dl-link">Download a backup copy</a>';
+    else b.textContent="Not confirmed, your answers are still saved on this device. Please send this file to the organiser";
+  }
+  const dl=document.getElementById("btn-dl-link");
+  if(dl)dl.onclick=(ev)=>{ev.preventDefault();$("btn-download").click();};
+}
+
+/* ---------- state ---------- */
+let MANIFEST=null, ASSIGN=null, RATER=null, ORDER=[], POS={}, RESULTS=[], T0=0, CUR=0;
+
+/* ---------- utils ---------- */
+const $=id=>document.getElementById(id);
+function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^=h>>>16)>>>0;};}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function seededOrder(promptIds, raterId, seed){
+  const rnd=mulberry32(xmur3(seed+":"+raterId)());
+  const order=[...promptIds]; for(let i=order.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+  const offset=Math.floor(rnd()*6), PERMS=[[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]], plan={};
+  order.forEach((pid,seq)=>{const p=PERMS[(offset+seq)%6];plan[pid]=p.map(k=>MANIFEST.prompts[pid].image_ids[k]);});
+  return {order,plan};
+}
+function csvEsc(v){v=String(v??"");return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+function scriptOf(pid){const lang=(MANIFEST.prompts[pid].language||"").toLowerCase();
+  if(lang.includes("hinglish"))return "Hinglish"; if(lang.includes("telugu"))return "Telugu";
+  if(lang.includes("hindi"))return "Hindi"; return "English";}
+
+/* ---------- boot ---------- */
+async function boot(){
+  try{ const r=await fetch("manifest.json",{cache:"no-store"}); if(!r.ok)throw 0; MANIFEST=await r.json(); }
+  catch(e){ document.body.insertAdjacentHTML("afterbegin",
+    '<p class="err">Could not load <code>manifest.json</code> from the same folder as this file. '+
+    'Host this app next to <code>manifest.json</code> and <code>rating_images/</code>.</p>'); return; }
+  try{ const r=await fetch("assignments.json",{cache:"no-store"}); if(r.ok)ASSIGN=await r.json(); }catch(e){ASSIGN=null;}
+  // resume a saved session from this browser (ratings are saved after every prompt)
+  try{
+    const sr=JSON.parse(localStorage.getItem("q1_rater")||"null");
+    if(sr&&sr.rater_id){
+      const sres=JSON.parse(localStorage.getItem("q1_results_"+sr.rater_id)||"[]");
+      $("resume-msg").textContent=`A saved session was found in this browser: ${sr.rater_id}, ${sres.length} prompt(s) rated. Resume it, or fill in the form below to start a new one (a new session with the same ID replaces the saved ratings).`;
+      $("resume-box").style.display="block";
+      $("btn-resume").onclick=()=>{
+        RATER=sr;RESULTS=sres;buildPlan(sr.rater_id);flushQueue();
+        if(!ORDER.length)return;
+        const next=ORDER.findIndex(pid=>!RESULTS.some(r=>r.prompt_id===pid));
+        $("screen-consent").style.display="none";$("resume-box").style.display="none";
+        if(next===-1){finishScreen();}
+        else{CUR=next;$("screen-rate").style.display="block";showPrompt();}
+      };
+    }
+  }catch(e){}
+}
+boot();
+
+/* ---------- plan (shared by consent + resume) ---------- */
+function buildPlan(rid){
+  const seed=MANIFEST.seed||"q1-indic-2026";
+  if(ASSIGN&&ASSIGN[rid]){ORDER=ASSIGN[rid].order;POS=ASSIGN[rid].positions;}
+  else{const p=seededOrder(Object.keys(MANIFEST.prompts),rid,seed);ORDER=p.order;POS=p.plan;}
+  // language gate: English to everyone; Hindi+Hinglish need Hindi; Telugu needs Telugu
+  ORDER=ORDER.filter(pid=>{const s=scriptOf(pid);
+    if(s==="English")return true;
+    if(s==="Hindi"||s==="Hinglish")return RATER.scripts.includes("Hindi");
+    if(s==="Telugu")return RATER.scripts.includes("Telugu");
+    return false;});
+}
+function finishScreen(){
+  $("screen-rate").style.display="none";$("screen-done").style.display="block";
+  $("done-msg").textContent=`${RATER.rater_id}: you rated ${RESULTS.length} prompt(s). Median time per prompt: ${median(RESULTS.map(r=>r.time_seconds))}s.`;
+  flushQueue();
+}
+
+/* ---------- consent ---------- */
+$("btn-consent").onclick=()=>{
+  const name=$("f-name").value.trim(), email=$("f-email").value.trim(), age=Number($("f-age").value);
+  const scripts=[...document.querySelectorAll(".f-script:checked")].map(c=>c.value);
+  const region=$("f-region").value.trim(), role=$("f-role").value;
+  let rid=($("f-rater").value.replace(/\s+/g,"")||("R-"+Math.random().toString(36).slice(2,7))).toUpperCase();
+  const err=$("consent-err");
+  if(!name){err.textContent="Please enter your name.";return;}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){err.textContent="Please enter a valid email.";return;}
+  if(!Number.isFinite(age)||age<18){err.textContent="You must be 18 or older to take part.";return;}
+  if(!$("f-consent").checked){err.textContent="Please tick the consent statement to continue.";return;}
+  if(!scripts.length){err.textContent="Please tick at least one script you read fluently.";return;}
+  if(!role){err.textContent="Please select your role.";return;}
+  RATER={rater_id:rid,name,email,age,consent:"yes",scripts,region,role,consent_ts:new Date().toISOString()};
+  // plan: pre-generated assignment if rater_id matches, else same-scheme seeded fallback
+  buildPlan(rid);
+  if(!ORDER.length){err.textContent="No prompts match your scripts. Please check the script boxes.";return;}
+  try{localStorage.setItem("q1_rater",JSON.stringify(RATER));}catch(e){}
+  enqueue("consent",pickCols(consentRow(),["rater_id","name","email","age","consent","scripts_read","region","role","consent_timestamp"]));
+  $("screen-consent").style.display="none";$("screen-practice").style.display="block";
+};
+$("btn-practice").onclick=()=>{$("screen-practice").style.display="none";$("screen-rate").style.display="block";CUR=0;showPrompt();};
+
+/* ---------- rating ---------- */
+function slotState(pid,pos){
+  // A slot is no-output if its file is missing from the blinded bundle.
+  // Runtime image onerror also marks it (logged in the row).
+  return {missing:false};
+}
+function showPrompt(){
+  T0=Date.now();
+  $("r-pref").value="";$("r-worst").value="";$("r-worst").disabled=false;
+  const pid=ORDER[CUR], P=MANIFEST.prompts[pid], trio=POS[pid];
+  $("r-title").textContent=`Prompt ${CUR+1} of ${ORDER.length} (${pid})`;
+  $("r-prompt").textContent=P.prompt_text;
+  $("r-key").textContent=P.what_it_probes||"(no key hint)";
+  $("r-progress").textContent=`~3 min for this prompt · scripts: ${P.language} · ${P.difficulty}`;
+  const box=$("r-imgs");box.innerHTML="";
+  const prev=RESULTS.find(r=>r.prompt_id===pid);
+  const hasList=Array.isArray(P.no_output);  // manifest built by the current build_manifest.py
+  ["left","centre","right"].forEach((pos,i)=>{
+    const iid=trio[i], d=document.createElement("div");d.className="slot";
+    d.innerHTML=`<div class="muted">${pos.toUpperCase()} · ${pid}</div>`;
+    const img=document.createElement("img");img.alt=`${pos} image for ${pid}`;
+    const miss=document.createElement("div");miss.className="missing";miss.style.display="none";
+    miss.textContent="No image was returned";
+    const fail=document.createElement("div");fail.className="missing";fail.style.display="none";
+    fail.textContent="Image failed to load. Check your connection and reload this page (your progress is saved).";
+    img.onclick=()=>{if(!img.dataset.miss&&!img.dataset.fail){$("zoom-img").src=img.src;$("zoom").style.display="flex";}};
+    if(hasList&&P.no_output.includes(iid)){img.dataset.miss="1";img.style.display="none";miss.style.display="block";}
+    else{
+      img.onerror=()=>{img.style.display="none";
+        if(hasList){img.dataset.fail="1";fail.style.display="block";}   // real image, load problem
+        else{img.dataset.miss="1";miss.style.display="block";}          // legacy manifest: infer no-output
+        validate();};
+      img.src=`rating_images/${iid}.png`;
+    }
+    d.appendChild(img);d.appendChild(miss);d.appendChild(fail);box.appendChild(d);
+  });
+  // form
+  const f=$("r-form");f.innerHTML="";
+  DIMS.forEach(([key,label,anchor])=>{
+    const t=document.createElement("table");t.className="rubric";
+    t.innerHTML=`<tr><th style="text-align:left">${label}<br><span class="anchor">${anchor}</span></th>
+      <th>Left</th><th>Centre</th><th>Right</th></tr>`;
+    const tr=document.createElement("tr");tr.innerHTML=`<td style="text-align:left">score 1–5</td>`;
+    ["left","centre","right"].forEach(pos=>{
+      const td=document.createElement("td"), s=document.createElement("select");
+      s.dataset.dim=key;s.dataset.pos=pos;
+      s.innerHTML=`<option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>`;
+      s.onchange=validate;td.appendChild(s);tr.appendChild(td);
+    });
+    t.appendChild(tr);f.appendChild(t);
+  });
+  const u=document.createElement("div");u.innerHTML="<b>Usable as-is?</b> (per image: could an ordinary person or shopkeeper use it without correction) ";
+  ["left","centre","right"].forEach(pos=>{
+    u.innerHTML+=` ${pos}: <select data-usable="${pos}" onchange="validate()"><option value="">—</option><option value="Y">Yes</option><option value="minor">Yes after minor fix</option><option value="N">No</option></select>`;
+  });
+  f.appendChild(u);
+  const tg=document.createElement("div");tg.className="tags";tg.innerHTML="<b>Failure tags</b> (optional, per image) ";
+  ["left","centre","right"].forEach(pos=>{
+    const fs=document.createElement("fieldset");fs.innerHTML=`<legend>${pos}</legend>`;
+    TAGS.filter(t=>t!=="no_output").forEach(t=>{
+      fs.innerHTML+=`<label><input type="checkbox" data-tag="${pos}" value="${t}"> ${t} — ${TAG_DEFS[t]}</label>`;
+    });
+    tg.appendChild(fs);
+  });
+  f.appendChild(tg);
+  f.insertAdjacentHTML("beforeend",'<label>Comment (optional) <input id="r-comment" type="text" style="max-width:100%"></label>');
+  window.validate=validate;
+  if(prev)restore(prev);
+  $("rate-err").textContent="";
+  $("btn-next").textContent=CUR===ORDER.length-1?"Finish ✓":"Next →";
+  validate();
+}
+function slotMissing(posIdx){
+  const imgs=$("r-imgs").querySelectorAll(".slot");
+  return imgs[posIdx]&&imgs[posIdx].querySelector("img").dataset.miss==="1";
+}
+function validate(){
+  const err=$("rate-err");err.textContent="";
+  let ok=true;
+  document.querySelectorAll("#r-form select[data-dim]").forEach(s=>{
+    const miss=slotMissing({left:0,centre:1,right:2}[s.dataset.pos]);
+    if(miss){s.value="1";s.disabled=true;}else if(!s.value)ok=false;
+  });
+  document.querySelectorAll("#r-form select[data-usable]").forEach(s=>{
+    const pos=s.getAttribute("data-usable"), miss=slotMissing({left:0,centre:1,right:2}[pos]);
+    if(miss){s.value="N";s.disabled=true;}else if(!s.value)ok=false;
+  });
+  const pref=$("r-pref").value;
+  const missCount=[0,1,2].filter(slotMissing).length;
+  if(!pref)ok=false;
+  else if(pref!=="tie_unusable"&&slotMissing({left:0,centre:1,right:2}[pref])){err.textContent="A 'no image' slot is ranked last — it cannot be the overall best.";ok=false;}
+  else if(missCount===3&&pref!=="tie_unusable"){err.textContent="All three slots are empty — choose 'All equally unusable'.";ok=false;}
+  const names=["left","centre","right"], missIdx=[0,1,2].filter(slotMissing), w=$("r-worst");
+  if(pref==="tie_unusable"||missIdx.length>=2){w.value="n/a";w.disabled=true;}
+  else if(missIdx.length===1){w.value=names[missIdx[0]];w.disabled=true;}
+  else{
+    w.disabled=false;if(w.value==="n/a")w.value="";
+    if(!w.value)ok=false;
+    else if(pref&&w.value===pref){err.textContent="Best and worst cannot be the same image.";ok=false;}
+  }
+  if(document.querySelector("#r-imgs img[data-fail='1']")){err.textContent="An image failed to load. Reload the page, then continue (your progress is saved).";ok=false;}
+  $("btn-next").disabled=!ok;
+  return ok;
+}
+$("r-pref").onchange=validate;$("r-worst").onchange=validate;
+$("r-phone").onchange=e=>$("r-imgs").classList.toggle("phonesize",e.target.checked);
+$("btn-copy").onclick=()=>navigator.clipboard&&navigator.clipboard.writeText($("r-prompt").textContent);
+function collect(){
+  const pid=ORDER[CUR], trio=POS[pid], secs=Math.round((Date.now()-T0)/1000);
+  const get=(dim,pos)=>document.querySelector(`#r-form select[data-dim="${dim}"][data-pos="${pos}"]`).value;
+  const row={rater_id:RATER.rater_id,name:RATER.name,email:RATER.email,age:RATER.age,consent:RATER.consent,
+    prompt_id:pid,image_id_left:trio[0],image_id_centre:trio[1],image_id_right:trio[2]};
+  ["left","centre","right"].forEach(pos=>{
+    DIMS.forEach(([k])=>row[k+"_"+pos]=get(k,pos));
+    row["usable_"+pos]=document.querySelector(`#r-form select[data-usable="${pos}"]`).value;
+    let tags=[...document.querySelectorAll(`#r-form input[data-tag="${pos}"]:checked`)].map(c=>c.value);
+    const idx={left:0,centre:1,right:2}[pos];
+    if(slotMissing(idx)&&!tags.includes("no_output"))tags.push("no_output");
+    row["failure_tags_"+pos]=tags.join("|");
+  });
+  row.overall_preference=$("r-pref").value;row.overall_worst=$("r-worst").value;
+  row.comment=($("r-comment").value||"").trim();row.time_seconds=secs;row.timestamp=new Date().toISOString();
+  return row;
+}
+function restore(prev){
+  DIMS.forEach(([k])=>["left","centre","right"].forEach(pos=>{
+    const s=document.querySelector(`#r-form select[data-dim="${k}"][data-pos="${pos}"]`);if(s&&prev[k+"_"+pos])s.value=prev[k+"_"+pos];}));
+  ["left","centre","right"].forEach(pos=>{
+    const s=document.querySelector(`#r-form select[data-usable="${pos}"]`);if(s&&prev["usable_"+pos])s.value=prev["usable_"+pos];});
+  $("r-pref").value=prev.overall_preference||"";
+  $("r-worst").value=prev.overall_worst||"";
+  ["left","centre","right"].forEach(pos=>(prev["failure_tags_"+pos]||"").split("|").filter(Boolean).forEach(t=>{
+    const c=document.querySelector(`#r-form input[data-tag="${pos}"][value="${t}"]`);if(c)c.checked=true;}));
+  const cm=$("r-comment");if(cm)cm.value=prev.comment||"";
+}
+$("btn-back").onclick=()=>{if(CUR>0){CUR--;showPrompt();}};
+$("btn-next").onclick=()=>{
+  if(!validate())return;
+  const row=collect();
+  const i=RESULTS.findIndex(r=>r.prompt_id===row.prompt_id);
+  if(i>=0)RESULTS[i]=row;else RESULTS.push(row);
+  try{localStorage.setItem("q1_results_"+RATER.rater_id,JSON.stringify(RESULTS));}catch(e){}
+  enqueue("rating",pickCols(row,CSV_COLS));
+  if(CUR<ORDER.length-1){CUR++;showPrompt();}
+  else{finishScreen();}
+};
+function median(a){a=[...a].sort((x,y)=>x-y);return a.length?a[Math.floor(a.length/2)]:0;}
+function toCSV(rows){
+  return CSV_COLS.join(",")+"\n"+rows.map(r=>CSV_COLS.map(c=>csvEsc(r[c])).join(",")).join("\n")+"\n";
+}
+function dl(name,text){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([text],{type:"text/csv;charset=utf-8"}));a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+$("btn-download").onclick=()=>{
+  const ordered=[...RESULTS].sort((a,b)=>ORDER.indexOf(a.prompt_id)-ORDER.indexOf(b.prompt_id));
+  dl(`ratings_${RATER.rater_id}.csv`,"\uFEFF"+toCSV(ordered));
+};
+$("btn-consent-dl").onclick=()=>{
+  const r=consentRow();
+  dl(`consent_${RATER.rater_id}.csv`,
+    "rater_id,name,email,age,consent,scripts_read,region,role,consent_timestamp\n"+
+    [r.rater_id,r.name,r.email,r.age,r.consent,
+     '"'+r.scripts_read+'"',r.region,r.role,r.consent_ts].map(csvEsc).join(",")+"\n");
+};
+</script>
+</body>
+</html>

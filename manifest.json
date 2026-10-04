@@ -1,0 +1,127 @@
+{
+  "study": "Q1 Indic study-aid visuals (blinded)",
+  "seed": "q1-indic-2026",
+  "note": "Blinded manifest. No model identities. Pair with assignments at runtime via rater_id.",
+  "prompts": {
+    "P21": {
+      "prompt_text": "Create a signboard for a small tea stall in India, hand-painted style, with a steaming cup of chai. Text exactly: \"Hot Chai\", \"Rs 10\".",
+      "language": "English (control)",
+      "difficulty": "Easy",
+      "what_it_probes": "Plain English baseline. Check both texts are spelled exactly and the sign looks like an Indian tea stall.",
+      "image_ids": [
+        "Q1-0a05fb",
+        "Q1-ca347d",
+        "Q1-3ddfa6"
+      ],
+      "no_output": []
+    },
+    "P22": {
+      "prompt_text": "एक छोटी मिठाई की दुकान के लिए रंगीन बोर्ड बनाइए, जिस पर लड्डू और जलेबी के चित्र हों। बोर्ड पर ठीक यही लिखिए: \"मिठाई की दुकान\", \"ताज़ा लड्डू\"।",
+      "language": "Hindi (Devanagari); prompt also in Hindi",
+      "difficulty": "Easy-Medium",
+      "what_it_probes": "Prompt written in Hindi. Check both texts are spelled exactly and the board shows laddoo and jalebi.",
+      "image_ids": [
+        "Q1-b118c6",
+        "Q1-7eff4a",
+        "Q1-92a90b"
+      ],
+      "no_output": []
+    },
+    "P23": {
+      "prompt_text": "Create a vertical Diwali greeting card for sharing on WhatsApp, with lit diyas, flowers and a night sky. Text in Hindi, exactly: \"शुभ दिवाली\", \"आपको और आपके परिवार को बधाई\".",
+      "language": "Hindi (Devanagari)",
+      "difficulty": "Medium",
+      "what_it_probes": "Greeting card. Check both lines are spelled exactly and diyas, flowers and a night sky are shown. Aspect 2:3.",
+      "image_ids": [
+        "Q1-8fd417",
+        "Q1-d0f11f",
+        "Q1-62ef76"
+      ],
+      "no_output": []
+    },
+    "P24": {
+      "prompt_text": "Create a colourful price board for a vegetable stall in an Indian market, with pictures of a tomato, a potato, an onion and a carrot. Text in Hindi, exactly: \"टमाटर ₹30\", \"आलू ₹20\", \"प्याज ₹25\", \"गाजर ₹50\". Each price must be next to its own vegetable.",
+      "language": "Hindi (Devanagari)",
+      "difficulty": "Hard (stress)",
+      "what_it_probes": "Four items with prices. Check each name and price is exact and sits next to the right vegetable.",
+      "image_ids": [
+        "Q1-0d5240",
+        "Q1-e558fc",
+        "Q1-c26544"
+      ],
+      "no_output": []
+    },
+    "P25": {
+      "prompt_text": "Create a Good Morning picture for sharing on WhatsApp: a cup of chai on a window sill, a sunrise and some flowers. Text in Hindi, exactly: \"सुप्रभात\", \"आपका दिन शुभ हो\".",
+      "language": "Hindi (Devanagari)",
+      "difficulty": "Easy-Medium",
+      "what_it_probes": "Greeting picture. Check both texts are spelled exactly and chai, a sunrise and flowers are shown.",
+      "image_ids": [
+        "Q1-433036",
+        "Q1-88a535",
+        "Q1-59f962"
+      ],
+      "no_output": []
+    },
+    "P26": {
+      "prompt_text": "Create a simple vertical wedding invitation card with flowers and a gold border. Text in Hindi, exactly: \"शादी का निमंत्रण\", \"रोहित और प्रिया\", \"14 दिसंबर, शाम 7 बजे\". No other text.",
+      "language": "Hindi (Devanagari)",
+      "difficulty": "Hard (stress)",
+      "what_it_probes": "Invitation with names, date and time. Check all three lines are exact and no extra text is added. Aspect 2:3.",
+      "image_ids": [
+        "Q1-9391e6",
+        "Q1-8a6f68",
+        "Q1-808259"
+      ],
+      "no_output": []
+    },
+    "P27": {
+      "prompt_text": "Create a Good Morning picture for sharing on WhatsApp: a cup of coffee on a window sill, a sunrise and some flowers. Text in Telugu, exactly: \"శుభోదయం\".",
+      "language": "Telugu",
+      "difficulty": "Easy",
+      "what_it_probes": "Greeting picture. Check the Telugu word is spelled exactly.",
+      "image_ids": [
+        "Q1-369bbb",
+        "Q1-27dc4e",
+        "Q1-ed85d0"
+      ],
+      "no_output": []
+    },
+    "P28": {
+      "prompt_text": "Create a birthday cake picture for a child's party in India, with candles and balloons. Text on the cake, in Telugu, exactly: \"పుట్టినరోజు శుభాకాంక్షలు\".",
+      "language": "Telugu",
+      "difficulty": "Medium",
+      "what_it_probes": "Birthday cake. Check the Telugu text is spelled exactly and sits on the cake.",
+      "image_ids": [
+        "Q1-3ce992",
+        "Q1-0dded7",
+        "Q1-4d267f"
+      ],
+      "no_output": []
+    },
+    "P29": {
+      "prompt_text": "Create a colourful signboard for a street snack stall in India, with a plate of hot samosas. Text in Hinglish (Hindi written in Latin script), exactly: \"Garma garam samosa\", \"Rs 15\".",
+      "language": "Hinglish (Latin script)",
+      "difficulty": "Easy-Medium",
+      "what_it_probes": "Latin-script Hindi. Check both texts are spelled exactly.",
+      "image_ids": [
+        "Q1-02af11",
+        "Q1-19a7ff",
+        "Q1-cb5152"
+      ],
+      "no_output": []
+    },
+    "P30": {
+      "prompt_text": "Create a vertical Diwali greeting card for sharing on WhatsApp, with lit diyas, flowers and a night sky. Text in Hinglish (Hindi written in Latin script), exactly: \"Shubh Diwali\", \"Aapko aur aapke parivaar ko badhai\".",
+      "language": "Hinglish (Latin script)",
+      "difficulty": "Medium",
+      "what_it_probes": "Greeting card. Check both lines are spelled exactly and diyas, flowers and a night sky are shown. Aspect 2:3.",
+      "image_ids": [
+        "Q1-7c50e2",
+        "Q1-476222",
+        "Q1-42d26d"
+      ],
+      "no_output": []
+    }
+  }
+}
